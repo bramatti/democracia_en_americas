@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Democracia nas Américas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --ink: #1a1a18;
+    --ink2: #4a4a46;
+    --ink3: #8a8a84;
+    --rule: #e2e0d8;
+    --accent: #c8392b;
+    --accent2: #2563a8;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── MASTHEAD ─────────────────────────────── */
+  .masthead {
+    background: var(--ink);
+    color: #fff;
+    padding: 0 2rem;
+  }
+
+  .masthead-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: end;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .kicker {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 0.6rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  .masthead-meta {
+    text-align: right;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+
+  .masthead-meta strong {
+    display: block;
+    font-size: 1.4rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .byline-bar {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.38);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .byline-bar span::before { content: '·  '; }
+  .byline-bar span:first-child::before { content: ''; }
+
+  /* ── DECKLEAD ─────────────────────────────── */
+  .deck {
+    background: var(--accent);
+    color: #fff;
+    padding: 0 2rem;
+  }
+
+  .deck-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .deck-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  .deck-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .deck-text strong { color: #fff; font-weight: 500; }
+
+  /* ── MAIN LAYOUT ──────────────────────────── */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  /* ── SIDEBAR ──────────────────────────────── */
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .sidebar-section {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .sidebar-head {
+    padding: 0.65rem 1rem;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-head .count {
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  .quick-btns {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .qbtn {
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--ink2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .qbtn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .cb-list {
+    padding: 0.4rem 0;
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+  }
+
+  .cb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.32rem 1rem;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+  }
+
+  .cb-item:hover { background: var(--bg); }
+
+  .cb-item input[type="checkbox"] { display: none; }
+
+  .cb-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1.5px solid var(--rule);
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.15s;
+  }
+
+  .cb-box.checked {
+    border-color: var(--swatch);
+    background: var(--swatch);
+  }
+
+  .cb-box.checked::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 3px;
+    width: 5px; height: 8px;
+    border: 2px solid #fff;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(40deg);
+  }
+
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cb-name {
+    font-size: 0.8rem;
+    color: var(--ink);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cb-val {
+    font-size: 0.68rem;
+    color: var(--ink3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* sidebar stats */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+  }
+
+  .stat-cell {
+    background: var(--surface);
+    padding: 0.75rem 0.85rem;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink3);
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 0.15rem;
+  }
+
+  .stat-country {
+    font-size: 0.65rem;
+    color: var(--ink2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── MAIN CONTENT ─────────────────────────── */
+  .main { min-width: 0; }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .chart-range {
+    font-size: 0.7rem;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .chart-body {
+    padding: 1.25rem 1.25rem 0.75rem;
+    position: relative;
+  }
+
+  .chart-body canvas { display: block; }
+
+  .chart-note {
+    padding: 0.5rem 1.25rem 0.85rem;
+    font-size: 0.68rem;
+    color: var(--ink3);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── FACTS ROW ────────────────────────────── */
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .fact {
+    background: var(--surface);
+    padding: 1rem 1.1rem;
+  }
+
+  .fact-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink3);
+    margin-bottom: 0.5rem;
+  }
+
+  .fact-flag {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  .fact-country {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .fact-number {
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  .fact-number.negative { color: var(--accent); }
+  .fact-number.positive { color: #16803c; }
+  .fact-number.neutral  { color: var(--accent2); }
+
+  .fact-year {
+    font-size: 0.65rem;
+    color: var(--ink3);
+    margin-top: 0.15rem;
+  }
+
+  /* ── FOOTER ───────────────────────────────── */
+  .footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 0;
+    padding: 1rem 0;
+    font-size: 0.68rem;
+    color: var(--ink3);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  /* ── RESPONSIVE ───────────────────────────── */
+  @media (max-width: 720px) {
+    .masthead-inner { grid-template-columns: 1fr; }
+    .masthead-meta { text-align: left; }
+    .page { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .facts { grid-template-columns: 1fr; }
+    .cb-list { max-height: 240px; }
+  }
+
+  /* ── FADE IN ──────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .masthead  { animation: fadeUp 0.5s ease both; }
+  .deck      { animation: fadeUp 0.5s 0.08s ease both; }
+  .page      { animation: fadeUp 0.5s 0.15s ease both; }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <p class="kicker">Análise de dados · V-DEM Institute</p>
+      <h1>Democracia<br>nas Américas</h1>
+    </div>
+    <div class="masthead-meta">
+      <strong>2000–2025</strong>
+      20 países<br>26 anos de dados<br>Liberal Democracy Index
+    </div>
+  </div>
+  <div class="byline-bar">
+    <span>V-DEM Institute</span>
+    <span>Liberal Democracy Index</span>
+    <span>Escala 0 – 1</span>
+  </div>
+</header>
+
+<!-- DECK LEAD -->
+<div class="deck">
+  <div class="deck-inner">
+    <div class="deck-icon">ⓘ</div>
+    <p class="deck-text">
+      O <strong>Liberal Democracy Index</strong> do V-DEM Institute mede em escala de <strong>0 a 1</strong> o grau de democracia liberal de um país. O índice combina eleições livres e justas, liberdades civis, estado de direito e controles sobre o poder executivo. Quanto mais próximo de <strong>1</strong>, mais democrático.
+    </p>
+  </div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- stats -->
+    <div class="sidebar-section">
+      <div class="sidebar-head">Panorama 2025</div>
+      <div class="stat-grid" id="stats-grid">
+        <div class="stat-cell">
+          <div class="stat-label">Mais alto</div>
+          <div class="stat-value" id="stat-top-val">—</div>
+          <div class="stat-country" id="stat-top-name">—</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Mais baixo</div>
+          <div class="stat-value" id="stat-bot-val">—</div>
+          <div class="stat-country" id="stat-bot-name">—</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Maior alta</div>
+          <div class="stat-value" id="stat-rise-val" style="color:#16803c">—</div>
+          <div class="stat-country" id="stat-rise-name">—</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Maior queda</div>
+          <div class="stat-value" id="stat-drop-val" style="color:#c8392b">—</div>
+          <div class="stat-country" id="stat-drop-name">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- country selector -->
+    <div class="sidebar-section">
+      <div class="sidebar-head">
+        Países
+        <span class="count" id="sel-count">0</span>
+      </div>
+      <div class="quick-btns">
+        <button class="qbtn" onclick="selectAll()">Todos</button>
+        <button class="qbtn" onclick="clearAll()">Limpar</button>
+        <button class="qbtn" onclick="selectPreset(['Brasil','Venezuela','Chile','Estados Unidos de América','El Salvador','Nicaragua'])">Destaque</button>
+        <button class="qbtn" onclick="selectPreset(['Costa Rica','Uruguay','Chile','Canadá'])">Top democracias</button>
+      </div>
+      <div class="cb-list" id="cb-list"></div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title">Evolução do Índice de Democracia Liberal</span>
+        <span class="chart-range">2000 — 2025</span>
+      </div>
+      <div class="chart-body">
+        <canvas id="myChart" height="360"></canvas>
+      </div>
+      <div class="chart-note">
+        Passe o cursor sobre o gráfico para ver valores exatos por país e ano. Selecione ou desmarque países na coluna à esquerda.
+      </div>
+    </div>
+
+    <!-- facts -->
+    <div class="facts" id="facts-row"></div>
+
+    <!-- footer -->
+    <div class="footer">
+      <span>Fonte: V-DEM Institute, Liberal Democracy Index v14 — <em>Varieties of Democracy</em></span>
+      <span>Nota: Dados de 2024–2025 são projeções preliminares</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ─── DATA ─────────────────────────────────────────────────────── */
+const RAW = [
+["México",2000,0.481],["México",2001,0.484],["México",2002,0.494],["México",2003,0.499],["México",2004,0.505],["México",2005,0.505],["México",2006,0.478],["México",2007,0.454],["México",2008,0.456],["México",2009,0.459],["México",2010,0.465],["México",2011,0.468],["México",2012,0.457],["México",2013,0.42],["México",2014,0.421],["México",2015,0.433],["México",2016,0.434],["México",2017,0.44],["México",2018,0.452],["México",2019,0.428],["México",2020,0.406],["México",2021,0.371],["México",2022,0.33],["México",2023,0.302],["México",2024,0.246],["México",2025,0.221],
+["Colombia",2000,0.426],["Colombia",2001,0.422],["Colombia",2002,0.414],["Colombia",2003,0.421],["Colombia",2004,0.424],["Colombia",2005,0.428],["Colombia",2006,0.449],["Colombia",2007,0.461],["Colombia",2008,0.462],["Colombia",2009,0.465],["Colombia",2010,0.498],["Colombia",2011,0.539],["Colombia",2012,0.54],["Colombia",2013,0.537],["Colombia",2014,0.545],["Colombia",2015,0.551],["Colombia",2016,0.547],["Colombia",2017,0.548],["Colombia",2018,0.533],["Colombia",2019,0.511],["Colombia",2020,0.496],["Colombia",2021,0.499],["Colombia",2022,0.561],["Colombia",2023,0.57],["Colombia",2024,0.554],["Colombia",2025,0.555],
+["Brasil",2000,0.717],["Brasil",2001,0.717],["Brasil",2002,0.721],["Brasil",2003,0.722],["Brasil",2004,0.722],["Brasil",2005,0.772],["Brasil",2006,0.77],["Brasil",2007,0.769],["Brasil",2008,0.769],["Brasil",2009,0.769],["Brasil",2010,0.776],["Brasil",2011,0.781],["Brasil",2012,0.777],["Brasil",2013,0.781],["Brasil",2014,0.783],["Brasil",2015,0.769],["Brasil",2016,0.653],["Brasil",2017,0.641],["Brasil",2018,0.608],["Brasil",2019,0.528],["Brasil",2020,0.534],["Brasil",2021,0.531],["Brasil",2022,0.54],["Brasil",2023,0.695],["Brasil",2024,0.712],["Brasil",2025,0.704],
+["Estados Unidos de América",2000,0.808],["Estados Unidos de América",2001,0.769],["Estados Unidos de América",2002,0.769],["Estados Unidos de América",2003,0.798],["Estados Unidos de América",2004,0.799],["Estados Unidos de América",2005,0.794],["Estados Unidos de América",2006,0.801],["Estados Unidos de América",2007,0.84],["Estados Unidos de América",2008,0.845],["Estados Unidos de América",2009,0.848],["Estados Unidos de América",2010,0.848],["Estados Unidos de América",2011,0.845],["Estados Unidos de América",2012,0.842],["Estados Unidos de América",2013,0.852],["Estados Unidos de América",2014,0.848],["Estados Unidos de América",2015,0.848],["Estados Unidos de América",2016,0.83],["Estados Unidos de América",2017,0.749],["Estados Unidos de América",2018,0.739],["Estados Unidos de América",2019,0.74],["Estados Unidos de América",2020,0.734],["Estados Unidos de América",2021,0.756],["Estados Unidos de América",2022,0.769],["Estados Unidos de América",2023,0.789],["Estados Unidos de América",2024,0.751],["Estados Unidos de América",2025,0.571],
+["El Salvador",2000,0.315],["El Salvador",2001,0.326],["El Salvador",2002,0.331],["El Salvador",2003,0.332],["El Salvador",2004,0.336],["El Salvador",2005,0.338],["El Salvador",2006,0.348],["El Salvador",2007,0.351],["El Salvador",2008,0.357],["El Salvador",2009,0.399],["El Salvador",2010,0.422],["El Salvador",2011,0.425],["El Salvador",2012,0.429],["El Salvador",2013,0.437],["El Salvador",2014,0.465],["El Salvador",2015,0.462],["El Salvador",2016,0.461],["El Salvador",2017,0.465],["El Salvador",2018,0.428],["El Salvador",2019,0.393],["El Salvador",2020,0.316],["El Salvador",2021,0.156],["El Salvador",2022,0.118],["El Salvador",2023,0.106],["El Salvador",2024,0.09],["El Salvador",2025,0.09],
+["Bolivia",2000,0.527],["Bolivia",2001,0.52],["Bolivia",2002,0.51],["Bolivia",2003,0.515],["Bolivia",2004,0.541],["Bolivia",2005,0.534],["Bolivia",2006,0.462],["Bolivia",2007,0.458],["Bolivia",2008,0.453],["Bolivia",2009,0.435],["Bolivia",2010,0.4],["Bolivia",2011,0.398],["Bolivia",2012,0.391],["Bolivia",2013,0.396],["Bolivia",2014,0.391],["Bolivia",2015,0.368],["Bolivia",2016,0.375],["Bolivia",2017,0.36],["Bolivia",2018,0.341],["Bolivia",2019,0.241],["Bolivia",2020,0.209],["Bolivia",2021,0.362],["Bolivia",2022,0.338],["Bolivia",2023,0.344],["Bolivia",2024,0.31],["Bolivia",2025,0.352],
+["Haití",2000,0.28],["Haití",2001,0.27],["Haití",2002,0.265],["Haití",2003,0.259],["Haití",2004,0.108],["Haití",2005,0.097],["Haití",2006,0.211],["Haití",2007,0.299],["Haití",2008,0.301],["Haití",2009,0.296],["Haití",2010,0.275],["Haití",2011,0.262],["Haití",2012,0.268],["Haití",2013,0.262],["Haití",2014,0.262],["Haití",2015,0.243],["Haití",2016,0.255],["Haití",2017,0.251],["Haití",2018,0.257],["Haití",2019,0.247],["Haití",2020,0.237],["Haití",2021,0.204],["Haití",2022,0.154],["Haití",2023,0.084],["Haití",2024,0.101],["Haití",2025,0.098],
+["Honduras",2000,0.326],["Honduras",2001,0.326],["Honduras",2002,0.327],["Honduras",2003,0.333],["Honduras",2004,0.333],["Honduras",2005,0.331],["Honduras",2006,0.312],["Honduras",2007,0.315],["Honduras",2008,0.323],["Honduras",2009,0.283],["Honduras",2010,0.239],["Honduras",2011,0.248],["Honduras",2012,0.24],["Honduras",2013,0.255],["Honduras",2014,0.27],["Honduras",2015,0.245],["Honduras",2016,0.254],["Honduras",2017,0.244],["Honduras",2018,0.233],["Honduras",2019,0.229],["Honduras",2020,0.233],["Honduras",2021,0.248],["Honduras",2022,0.389],["Honduras",2023,0.398],["Honduras",2024,0.383],["Honduras",2025,0.38],
+["Perú",2000,0.185],["Perú",2001,0.567],["Perú",2002,0.648],["Perú",2003,0.651],["Perú",2004,0.651],["Perú",2005,0.659],["Perú",2006,0.652],["Perú",2007,0.647],["Perú",2008,0.65],["Perú",2009,0.649],["Perú",2010,0.658],["Perú",2011,0.67],["Perú",2012,0.698],["Perú",2013,0.689],["Perú",2014,0.691],["Perú",2015,0.688],["Perú",2016,0.673],["Perú",2017,0.677],["Perú",2018,0.698],["Perú",2019,0.694],["Perú",2020,0.706],["Perú",2021,0.66],["Perú",2022,0.621],["Perú",2023,0.572],["Perú",2024,0.501],["Perú",2025,0.506],
+["Argentina",2000,0.67],["Argentina",2001,0.674],["Argentina",2002,0.661],["Argentina",2003,0.638],["Argentina",2004,0.632],["Argentina",2005,0.625],["Argentina",2006,0.614],["Argentina",2007,0.61],["Argentina",2008,0.59],["Argentina",2009,0.583],["Argentina",2010,0.578],["Argentina",2011,0.573],["Argentina",2012,0.582],["Argentina",2013,0.588],["Argentina",2014,0.595],["Argentina",2015,0.59],["Argentina",2016,0.612],["Argentina",2017,0.609],["Argentina",2018,0.63],["Argentina",2019,0.618],["Argentina",2020,0.634],["Argentina",2021,0.639],["Argentina",2022,0.654],["Argentina",2023,0.695],["Argentina",2024,0.558],["Argentina",2025,0.524],
+["Venezuela",2000,0.31],["Venezuela",2001,0.288],["Venezuela",2002,0.255],["Venezuela",2003,0.243],["Venezuela",2004,0.216],["Venezuela",2005,0.182],["Venezuela",2006,0.168],["Venezuela",2007,0.162],["Venezuela",2008,0.159],["Venezuela",2009,0.16],["Venezuela",2010,0.154],["Venezuela",2011,0.152],["Venezuela",2012,0.145],["Venezuela",2013,0.109],["Venezuela",2014,0.102],["Venezuela",2015,0.103],["Venezuela",2016,0.118],["Venezuela",2017,0.082],["Venezuela",2018,0.061],["Venezuela",2019,0.06],["Venezuela",2020,0.056],["Venezuela",2021,0.056],["Venezuela",2022,0.054],["Venezuela",2023,0.053],["Venezuela",2024,0.046],["Venezuela",2025,0.042],
+["Nicaragua",2000,0.378],["Nicaragua",2001,0.373],["Nicaragua",2002,0.377],["Nicaragua",2003,0.371],["Nicaragua",2004,0.372],["Nicaragua",2005,0.372],["Nicaragua",2006,0.322],["Nicaragua",2007,0.216],["Nicaragua",2008,0.203],["Nicaragua",2009,0.197],["Nicaragua",2010,0.192],["Nicaragua",2011,0.188],["Nicaragua",2012,0.156],["Nicaragua",2013,0.125],["Nicaragua",2014,0.126],["Nicaragua",2015,0.124],["Nicaragua",2016,0.12],["Nicaragua",2017,0.103],["Nicaragua",2018,0.051],["Nicaragua",2019,0.046],["Nicaragua",2020,0.045],["Nicaragua",2021,0.034],["Nicaragua",2022,0.027],["Nicaragua",2023,0.021],["Nicaragua",2024,0.02],["Nicaragua",2025,0.019],
+["Canadá",2000,0.756],["Canadá",2001,0.752],["Canadá",2002,0.746],["Canadá",2003,0.746],["Canadá",2004,0.751],["Canadá",2005,0.751],["Canadá",2006,0.757],["Canadá",2007,0.759],["Canadá",2008,0.753],["Canadá",2009,0.753],["Canadá",2010,0.755],["Canadá",2011,0.74],["Canadá",2012,0.738],["Canadá",2013,0.742],["Canadá",2014,0.742],["Canadá",2015,0.735],["Canadá",2016,0.762],["Canadá",2017,0.769],["Canadá",2018,0.763],["Canadá",2019,0.763],["Canadá",2020,0.745],["Canadá",2021,0.749],["Canadá",2022,0.745],["Canadá",2023,0.742],["Canadá",2024,0.744],["Canadá",2025,0.736],
+["Chile",2000,0.81],["Chile",2001,0.811],["Chile",2002,0.817],["Chile",2003,0.817],["Chile",2004,0.817],["Chile",2005,0.821],["Chile",2006,0.839],["Chile",2007,0.842],["Chile",2008,0.841],["Chile",2009,0.836],["Chile",2010,0.837],["Chile",2011,0.839],["Chile",2012,0.844],["Chile",2013,0.846],["Chile",2014,0.85],["Chile",2015,0.839],["Chile",2016,0.839],["Chile",2017,0.842],["Chile",2018,0.803],["Chile",2019,0.761],["Chile",2020,0.766],["Chile",2021,0.777],["Chile",2022,0.776],["Chile",2023,0.779],["Chile",2024,0.786],["Chile",2025,0.781],
+["Costa Rica",2000,0.84],["Costa Rica",2001,0.841],["Costa Rica",2002,0.843],["Costa Rica",2003,0.843],["Costa Rica",2004,0.843],["Costa Rica",2005,0.839],["Costa Rica",2006,0.851],["Costa Rica",2007,0.854],["Costa Rica",2008,0.854],["Costa Rica",2009,0.855],["Costa Rica",2010,0.857],["Costa Rica",2011,0.856],["Costa Rica",2012,0.857],["Costa Rica",2013,0.853],["Costa Rica",2014,0.854],["Costa Rica",2015,0.854],["Costa Rica",2016,0.852],["Costa Rica",2017,0.85],["Costa Rica",2018,0.834],["Costa Rica",2019,0.842],["Costa Rica",2020,0.844],["Costa Rica",2021,0.843],["Costa Rica",2022,0.813],["Costa Rica",2023,0.809],["Costa Rica",2024,0.809],["Costa Rica",2025,0.809],
+["Ecuador",2000,0.445],["Ecuador",2001,0.445],["Ecuador",2002,0.446],["Ecuador",2003,0.454],["Ecuador",2004,0.452],["Ecuador",2005,0.454],["Ecuador",2006,0.451],["Ecuador",2007,0.407],["Ecuador",2008,0.343],["Ecuador",2009,0.329],["Ecuador",2010,0.309],["Ecuador",2011,0.304],["Ecuador",2012,0.306],["Ecuador",2013,0.265],["Ecuador",2014,0.262],["Ecuador",2015,0.263],["Ecuador",2016,0.264],["Ecuador",2017,0.338],["Ecuador",2018,0.458],["Ecuador",2019,0.446],["Ecuador",2020,0.481],["Ecuador",2021,0.454],["Ecuador",2022,0.504],["Ecuador",2023,0.463],["Ecuador",2024,0.443],["Ecuador",2025,0.386],
+["Guatemala",2000,0.362],["Guatemala",2001,0.362],["Guatemala",2002,0.362],["Guatemala",2003,0.363],["Guatemala",2004,0.372],["Guatemala",2005,0.373],["Guatemala",2006,0.374],["Guatemala",2007,0.386],["Guatemala",2008,0.395],["Guatemala",2009,0.396],["Guatemala",2010,0.397],["Guatemala",2011,0.393],["Guatemala",2012,0.391],["Guatemala",2013,0.41],["Guatemala",2014,0.412],["Guatemala",2015,0.425],["Guatemala",2016,0.451],["Guatemala",2017,0.444],["Guatemala",2018,0.415],["Guatemala",2019,0.415],["Guatemala",2020,0.402],["Guatemala",2021,0.359],["Guatemala",2022,0.314],["Guatemala",2023,0.338],["Guatemala",2024,0.492],["Guatemala",2025,0.523],
+["Panamá",2000,0.549],["Panamá",2001,0.558],["Panamá",2002,0.558],["Panamá",2003,0.558],["Panamá",2004,0.561],["Panamá",2005,0.547],["Panamá",2006,0.547],["Panamá",2007,0.547],["Panamá",2008,0.547],["Panamá",2009,0.549],["Panamá",2010,0.554],["Panamá",2011,0.554],["Panamá",2012,0.554],["Panamá",2013,0.547],["Panamá",2014,0.544],["Panamá",2015,0.553],["Panamá",2016,0.55],["Panamá",2017,0.553],["Panamá",2018,0.539],["Panamá",2019,0.535],["Panamá",2020,0.533],["Panamá",2021,0.544],["Panamá",2022,0.559],["Panamá",2023,0.557],["Panamá",2024,0.578],["Panamá",2025,0.575],
+["Uruguay",2000,0.797],["Uruguay",2001,0.802],["Uruguay",2002,0.802],["Uruguay",2003,0.79],["Uruguay",2004,0.808],["Uruguay",2005,0.819],["Uruguay",2006,0.823],["Uruguay",2007,0.823],["Uruguay",2008,0.822],["Uruguay",2009,0.825],["Uruguay",2010,0.847],["Uruguay",2011,0.847],["Uruguay",2012,0.847],["Uruguay",2013,0.843],["Uruguay",2014,0.843],["Uruguay",2015,0.832],["Uruguay",2016,0.832],["Uruguay",2017,0.828],["Uruguay",2018,0.836],["Uruguay",2019,0.836],["Uruguay",2020,0.808],["Uruguay",2021,0.789],["Uruguay",2022,0.747],["Uruguay",2023,0.756],["Uruguay",2024,0.768],["Uruguay",2025,0.79],
+["República Dominicana",2000,0.391],["República Dominicana",2001,0.391],["República Dominicana",2002,0.388],["República Dominicana",2003,0.385],["República Dominicana",2004,0.379],["República Dominicana",2005,0.383],["República Dominicana",2006,0.378],["República Dominicana",2007,0.376],["República Dominicana",2008,0.376],["República Dominicana",2009,0.377],["República Dominicana",2010,0.371],["República Dominicana",2011,0.364],["República Dominicana",2012,0.366],["República Dominicana",2013,0.354],["República Dominicana",2014,0.352],["República Dominicana",2015,0.344],["República Dominicana",2016,0.333],["República Dominicana",2017,0.328],["República Dominicana",2018,0.339],["República Dominicana",2019,0.34],["República Dominicana",2020,0.449],["República Dominicana",2021,0.484],["República Dominicana",2022,0.478],["República Dominicana",2023,0.471],["República Dominicana",2024,0.495],["República Dominicana",2025,0.505],
+["Jamaica",2000,0.549],["Jamaica",2001,0.549],["Jamaica",2002,0.566],["Jamaica",2003,0.617],["Jamaica",2004,0.617],["Jamaica",2005,0.629],["Jamaica",2006,0.633],["Jamaica",2007,0.644],["Jamaica",2008,0.654],["Jamaica",2009,0.654],["Jamaica",2010,0.656],["Jamaica",2011,0.651],["Jamaica",2012,0.667],["Jamaica",2013,0.679],["Jamaica",2014,0.679],["Jamaica",2015,0.679],["Jamaica",2016,0.685],["Jamaica",2017,0.696],["Jamaica",2018,0.688],["Jamaica",2019,0.703],["Jamaica",2020,0.702],["Jamaica",2021,0.691],["Jamaica",2022,0.692],["Jamaica",2023,0.677],["Jamaica",2024,0.676],["Jamaica",2025,0.679],
+["Cuba",2000,0.04],["Cuba",2001,0.041],["Cuba",2002,0.041],["Cuba",2003,0.04],["Cuba",2004,0.04],["Cuba",2005,0.041],["Cuba",2006,0.041],["Cuba",2007,0.041],["Cuba",2008,0.039],["Cuba",2009,0.05],["Cuba",2010,0.05],["Cuba",2011,0.051],["Cuba",2012,0.052],["Cuba",2013,0.057],["Cuba",2014,0.057],["Cuba",2015,0.057],["Cuba",2016,0.055],["Cuba",2017,0.058],["Cuba",2018,0.061],["Cuba",2019,0.062],["Cuba",2020,0.06],["Cuba",2021,0.056],["Cuba",2022,0.056],["Cuba",2023,0.055],["Cuba",2024,0.056],["Cuba",2025,0.057],
+["Paraguay",2000,0.391],["Paraguay",2001,0.391],["Paraguay",2002,0.391],["Paraguay",2003,0.409],["Paraguay",2004,0.428],["Paraguay",2005,0.427],["Paraguay",2006,0.433],["Paraguay",2007,0.446],["Paraguay",2008,0.493],["Paraguay",2009,0.502],["Paraguay",2010,0.509],["Paraguay",2011,0.503],["Paraguay",2012,0.48],["Paraguay",2013,0.407],["Paraguay",2014,0.414],["Paraguay",2015,0.416],["Paraguay",2016,0.414],["Paraguay",2017,0.418],["Paraguay",2018,0.417],["Paraguay",2019,0.42],["Paraguay",2020,0.42],["Paraguay",2021,0.427],["Paraguay",2022,0.43],["Paraguay",2023,0.42],["Paraguay",2024,0.39],["Paraguay",2025,0.376]
+];
+
+/* ─── PALETTE ───────────────────────────────────────────────────── */
+const PALETTE = [
+  '#2563a8','#c8392b','#16803c','#d97706','#7c3aed',
+  '#0891b2','#db2777','#65a30d','#ea580c','#0f766e',
+  '#6366f1','#b45309','#047857','#be185d','#1d4ed8',
+  '#dc2626','#15803d','#9333ea','#0284c7','#92400e'
+];
+
+/* ─── DERIVED STRUCTURES ────────────────────────────────────────── */
+const COUNTRIES = [...new Set(RAW.map(r => r[0]))].sort((a, b) => {
+  // sort by 2025 value desc
+  const va = RAW.find(r => r[0] === a && r[1] === 2025)?.[2] ?? 0;
+  const vb = RAW.find(r => r[0] === b && r[1] === 2025)?.[2] ?? 0;
+  return vb - va;
+});
+const YEARS = [...new Set(RAW.map(r => r[1]))].sort();
+
+const BY_COUNTRY = {};
+COUNTRIES.forEach(c => {
+  BY_COUNTRY[c] = {};
+  RAW.filter(r => r[0] === c).forEach(r => { BY_COUNTRY[c][r[1]] = r[2]; });
+});
+
+function colorOf(i) { return PALETTE[i % PALETTE.length]; }
+function idxOf(name) { return COUNTRIES.indexOf(name); }
+
+/* ─── STATE ─────────────────────────────────────────────────────── */
+let selected = new Set(['Brasil','Venezuela','Chile','Estados Unidos de América','El Salvador','Nicaragua']);
+let chart = null;
+
+/* ─── SIDEBAR: COUNTRY LIST ─────────────────────────────────────── */
+function buildList() {
+  const wrap = document.getElementById('cb-list');
+  wrap.innerHTML = '';
+  COUNTRIES.forEach(c => {
+    const i = idxOf(c);
+    const col = colorOf(i);
+    const val = BY_COUNTRY[c][2025]?.toFixed(3) ?? '–';
+    const isChecked = selected.has(c);
+    const item = document.createElement('div');
+    item.className = 'cb-item';
+    item.dataset.country = c;
+    item.innerHTML = `
+      <div class="cb-box${isChecked ? ' checked' : ''}" style="--swatch:${col}"></div>
+      <span class="swatch" style="background:${col}"></span>
+      <span class="cb-name">${c}</span>
+      <span class="cb-val">${val}</span>
+    `;
+    item.addEventListener('click', () => toggleCountry(c, item));
+    wrap.appendChild(item);
+  });
+  updateCount();
+}
+
+function toggleCountry(c, item) {
+  if (selected.has(c)) { selected.delete(c); } else { selected.add(c); }
+  const box = item.querySelector('.cb-box');
+  const i = idxOf(c);
+  const col = colorOf(i);
+  box.style.setProperty('--swatch', col);
+  box.classList.toggle('checked', selected.has(c));
+  updateCount();
+  updateChart();
+}
+
+function updateCount() {
+  document.getElementById('sel-count').textContent = selected.size;
+}
+
+function selectAll()    { COUNTRIES.forEach(c => selected.add(c)); buildList(); updateChart(); }
+function clearAll()     { selected.clear(); buildList(); updateChart(); }
+function selectPreset(list) { selected = new Set(list); buildList(); updateChart(); }
+
+/* ─── STATS ─────────────────────────────────────────────────────── */
+function updateStats() {
+  let top = null, topV = -1, bot = null, botV = 2, rise = null, riseV = -999, drop = null, dropV = 999;
+  COUNTRIES.forEach(c => {
+    const v25 = BY_COUNTRY[c][2025] ?? 0;
+    const v00 = BY_COUNTRY[c][2000] ?? 0;
+    const diff = v25 - v00;
+    if (v25 > topV)  { topV = v25;  top = c; }
+    if (v25 < botV)  { botV = v25;  bot = c; }
+    if (diff > riseV){ riseV = diff; rise = c; }
+    if (diff < dropV){ dropV = diff; drop = c; }
+  });
+  document.getElementById('stat-top-val').textContent  = topV.toFixed(3);
+  document.getElementById('stat-top-name').textContent = top;
+  document.getElementById('stat-bot-val').textContent  = botV.toFixed(3);
+  document.getElementById('stat-bot-name').textContent = bot;
+  document.getElementById('stat-rise-val').textContent = '+' + riseV.toFixed(3);
+  document.getElementById('stat-rise-name').textContent = rise;
+  document.getElementById('stat-drop-val').textContent = dropV.toFixed(3);
+  document.getElementById('stat-drop-name').textContent = drop;
+}
+
+/* ─── FACTS ROW ─────────────────────────────────────────────────── */
+function updateFacts() {
+  let top = null, topV = -1, rise = null, riseV = -999, drop = null, dropV = 999;
+  COUNTRIES.forEach(c => {
+    const v25 = BY_COUNTRY[c][2025] ?? 0;
+    const v00 = BY_COUNTRY[c][2000] ?? 0;
+    const diff = v25 - v00;
+    if (v25 > topV)  { topV = v25;  top = c; }
+    if (diff > riseV){ riseV = diff; rise = c; }
+    if (diff < dropV){ dropV = diff; drop = c; }
+  });
+  const topColor = colorOf(idxOf(top));
+  const riseColor = colorOf(idxOf(rise));
+  const dropColor = colorOf(idxOf(drop));
+  document.getElementById('facts-row').innerHTML = `
+    <div class="fact">
+      <div class="fact-label">Mais democrático em 2025</div>
+      <div class="fact-country"><span class="fact-flag" style="background:${topColor}"></span>${top}</div>
+      <div class="fact-number neutral">Índice: ${topV.toFixed(3)}</div>
+    </div>
+    <div class="fact">
+      <div class="fact-label">Maior alta desde 2000</div>
+      <div class="fact-country"><span class="fact-flag" style="background:${riseColor}"></span>${rise}</div>
+      <div class="fact-number positive">+${riseV.toFixed(3)} pontos</div>
+      <div class="fact-year">de ${(BY_COUNTRY[rise][2000]).toFixed(3)} para ${(BY_COUNTRY[rise][2025]).toFixed(3)}</div>
+    </div>
+    <div class="fact">
+      <div class="fact-label">Maior queda desde 2000</div>
+      <div class="fact-country"><span class="fact-flag" style="background:${dropColor}"></span>${drop}</div>
+      <div class="fact-number negative">${dropV.toFixed(3)} pontos</div>
+      <div class="fact-year">de ${(BY_COUNTRY[drop][2000]).toFixed(3)} para ${(BY_COUNTRY[drop][2025]).toFixed(3)}</div>
+    </div>
+  `;
+}
+
+/* ─── CHART ─────────────────────────────────────────────────────── */
+function buildDatasets() {
+  return COUNTRIES
+    .filter(c => selected.has(c))
+    .map(c => {
+      const i = idxOf(c);
+      const col = colorOf(i);
+      return {
+        label: c,
+        data: YEARS.map(y => BY_COUNTRY[c][y] ?? null),
+        borderColor: col,
+        backgroundColor: col,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: col,
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2,
+        tension: 0.35,
+        fill: false
+      };
+    });
+}
+
+function updateChart() {
+  const ds = buildDatasets();
+  if (chart) {
+    chart.data.datasets = ds;
+    chart.update('active');
+    return;
+  }
+  const ctx = document.getElementById('myChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: YEARS, datasets: ds },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      animation: { duration: 300 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1a18',
+          titleColor: 'rgba(255,255,255,0.5)',
+          bodyColor: '#fff',
+          padding: 12,
+          bodySpacing: 5,
+          titleFont: { family: "'DM Sans', sans-serif", size: 11, weight: '500' },
+          bodyFont: { family: "'DM Sans', sans-serif", size: 12 },
+          callbacks: {
+            title: items => 'Ano: ' + items[0].label,
+            label: ctx => {
+              const v = ctx.parsed.y;
+              return '  ' + ctx.dataset.label + ': ' + v.toFixed(3);
+            },
+            labelColor: ctx => ({
+              borderColor: ctx.dataset.borderColor,
+              backgroundColor: ctx.dataset.borderColor,
+              borderWidth: 2
+            })
+          },
+          itemSort: (a, b) => b.parsed.y - a.parsed.y
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#e2e0d8', lineWidth: 0.5 },
+          ticks: {
+            font: { family: "'DM Sans', sans-serif", size: 11 },
+            color: '#8a8a84',
+            maxTicksLimit: 14
+          },
+          border: { color: '#e2e0d8' }
+        },
+        y: {
+          min: 0, max: 1,
+          grid: { color: '#e2e0d8', lineWidth: 0.5 },
+          ticks: {
+            font: { family: "'DM Sans', sans-serif", size: 11 },
+            color: '#8a8a84',
+            callback: v => v.toFixed(1),
+            count: 6
+          },
+          border: { color: '#e2e0d8', dash: [3, 3] }
+        }
+      }
+    }
+  });
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────── */
+buildList();
+updateStats();
+updateChart();
+updateFacts();
+</script>
+</body>
+</html>
